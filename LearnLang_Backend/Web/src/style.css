@@ -1,0 +1,123 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700;800&display=swap');
+
+
+.gradient-custom {
+    /* fallback for old browsers */
+    background: #6a11cb;
+    
+    /* Chrome 10-25, Safari 5.1-6 */
+    background: -webkit-linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
+    
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1))
+    }
+
+.textstyle{
+    color: #5e5873!important;
+    font-family: 'Poppins', sans-serif;
+}
+
+.textSidebar{
+    color:white;
+    font-family: 'Poppins', sans-serif;
+}
+.textSidebar:hover{
+    color: #fd0bdd;
+}
+.nav-link:active,
+.nav-link:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.nav-link:not(.disabled):active,
+.nav-link:not(.disabled):focus {
+  color: #fd0bdd;
+}
+.imgtb{
+    width: 50px!important;
+    max-height: 50px;
+    margin-left: 35px;
+    margin-bottom: -30px;
+}
+.imgtbs{
+    width: 100px!important;
+    margin-left: -40px;
+}
+.customTable{
+    flex:1;
+    margin-right: 10px
+
+}
+.tableContainer {
+    display: flex;
+  }
+.buttonstyle{
+    color: white;
+    background: #5e5873;
+    font-family: 'Poppins', sans-serif;
+    padding: 15px 0;
+    border-radius: 10px;
+    border: none;
+    font-size: 15px;
+    text-decoration: none;
+    width: 200px;
+}
+
+.buttonstyle:hover{
+    background: #7468a0;
+    color: white;
+}
+
+.bg{
+    background-color: #5e5873;
+}
+
+.bgSidebar{
+    background-color: white;
+    border-right: 1px solid #5e5873;
+}
+
+.columnContent{
+    margin-right: 300px;
+    background-color: black;
+}
+
+.logoStyle{
+    max-width: 200px;
+    width: 100%;
+    height: auto;
+}
+
+.textLogoStyle{
+    font-family: 'League Spartan', sans-serif;
+    font-size: 70px;
+    font-weight: bolder;
+    color: #5e5873;
+
+}
+
+.customMargin{
+    margin-left: 70%;
+}
+
+.widthButton{
+    width: 80px;
+}
+
+
+.tableA{
+    max-width: 100vh;
+    
+}
+
+.styleTable{
+    width: 80%;
+    margin-left: 10%;
+    margin-right: 20%;
+}
+
+.dn{
+    display: none;
+}

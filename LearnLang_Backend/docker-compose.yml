@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./
+    ports:
+      - "5000:5000"
+    environment:
+      DBHOST: database
+      DBUSER: root
+      DBDATABASE: voice_learn
+    depends_on:
+      - database
+
+  frontend:
+    build:
+      context: ./Web
+    ports:
+      - "8091:8091"
+
+  database:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: ""
+      MYSQL_DATABASE: voice_learn
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data: {}
