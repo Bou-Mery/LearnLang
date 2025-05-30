@@ -34,25 +34,37 @@ LearnLang est une application mobile innovante conçue pour faciliter l'apprenti
 
 ## 📸 Captures d'Écran
 
-![Image](https://github.com/user-attachments/assets/20931a1a-6da3-44e1-b8d8-9448ae131b7b)
+<div align="center">
+  <h3>Authentification</h3>
+  <div>
+    <img src="https://github.com/user-attachments/assets/20931a1a-6da3-44e1-b8d8-9448ae131b7b" width="200" alt="Inscription">
+    <img src="https://github.com/user-attachments/assets/5341532d-5cd0-4302-8cdf-46e5a51e83b6" width="200" alt="Connexion">
+  </div>
 
-![Image](https://github.com/user-attachments/assets/5341532d-5cd0-4302-8cdf-46e5a51e83b6)
+  <h3>Interface Principale</h3>
+  <div>
+    <img src="https://github.com/user-attachments/assets/7d26ef1d-3870-4718-b85e-7ee293c9d9b7" width="200" alt="Accueil">
+    <img src="https://github.com/user-attachments/assets/45162e88-891d-4715-b2c2-5cad2dcbf899" width="200" alt="Sélection langue">
+  </div>
 
-![Image](https://github.com/user-attachments/assets/7d26ef1d-3870-4718-b85e-7ee293c9d9b7)
+  <h3>Fonctionnalités Vocales</h3>
+  <div>
+    <img src="https://github.com/user-attachments/assets/5fdaa0e6-040b-4e03-a45a-a3b1d018ff7a" width="200" alt="Liste mots">
+    <img src="https://github.com/user-attachments/assets/54f2672a-d965-469b-b9ee-2a7d1a8564fd" width="200" alt="Pratique vocale">
+  </div>
 
-![Image](https://github.com/user-attachments/assets/45162e88-891d-4715-b2c2-5cad2dcbf899)
+  <h3>Quiz et Progression</h3>
+  <div>
+    <img src="https://github.com/user-attachments/assets/10493b9d-64b5-4ab3-8d94-a007a07e781b" width="200" alt="Quiz">
+    <img src="https://github.com/user-attachments/assets/3562754a-bf39-4e48-98ce-f5ee9aeacbf5" width="200" alt="Historique">
+  </div>
 
-![Image](https://github.com/user-attachments/assets/5fdaa0e6-040b-4e03-a45a-a3b1d018ff7a)
-
-![Image](https://github.com/user-attachments/assets/54f2672a-d965-469b-b9ee-2a7d1a8564fd)
-
-![Image](https://github.com/user-attachments/assets/10493b9d-64b5-4ab3-8d94-a007a07e781b)
-
-![Image](https://github.com/user-attachments/assets/3562754a-bf39-4e48-98ce-f5ee9aeacbf5)
-
-![Image](https://github.com/user-attachments/assets/3bc06b7e-2633-4f4c-aeec-a6526e997072)
-
-![Image](https://github.com/user-attachments/assets/87f1ecd7-0ea1-4637-8b94-84e5f5d76ff0)
+  <h3>Profil</h3>
+  <div>
+    <img src="https://github.com/user-attachments/assets/3bc06b7e-2633-4f4c-aeec-a6526e997072" width="200" alt="Profil">
+    <img src="https://github.com/user-attachments/assets/87f1ecd7-0ea1-4637-8b94-84e5f5d76ff0" width="200" alt="Paramètres">
+  </div>
+</div>
 
 
 
