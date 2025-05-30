@@ -15,11 +15,43 @@ import SpellingScreen from '../screens/lessons/SpellingScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
 import HistoryScreen from '../screens/history/HistoryScreen';
 
+//new screens
+import LanguageSelection from '../screens/lessons/LanguageSelection';
+import QuizList from '../screens/lessons/QuizList';
 // Context
 import { AuthContext } from '../context/AuthContext';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+
+const LessonStack = createStackNavigator(); // Add this line
+// Define LessonStackNavigator FIRST
+const LessonStackNavigator = () => {
+  return (
+    <LessonStack.Navigator>
+      <LessonStack.Screen 
+        name="LanguageSelection" 
+        component={LanguageSelection} 
+        options={{ title: 'Select Language' }}
+      />
+      <LessonStack.Screen 
+        name="QuizList" 
+        component={QuizList} 
+        options={{ title: 'Word List' }}
+      />
+      <LessonStack.Screen 
+        name="Pronunciation" 
+        component={PronunciationScreen} 
+      />
+      <LessonStack.Screen 
+        name="Spelling" 
+        component={SpellingScreen} 
+      />
+      {/* Add other screens here */}
+    </LessonStack.Navigator>
+  );
+};
+
 
 // Tab Navigator
 const TabNavigator = () => {
@@ -50,28 +82,6 @@ const TabNavigator = () => {
       <Tab.Screen name="History" component={HistoryScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
-  );
-};
-
-// Lessons Stack Navigator
-const LessonStack = createStackNavigator();
-const LessonStackNavigator = () => {
-  return (
-    <LessonStack.Navigator>
-   
-      <LessonStack.Screen 
-        name="LessonDetail" 
-        component={LessonDetailScreen} 
-      />
-      <LessonStack.Screen 
-        name="Pronunciation" 
-        component={PronunciationScreen} 
-      />
-      <LessonStack.Screen 
-        name="Spelling" 
-        component={SpellingScreen} 
-      />
-    </LessonStack.Navigator>
   );
 };
 

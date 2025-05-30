@@ -25,6 +25,15 @@ const PronunciationScreen = ({ route, navigation }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState(null);
   const [sound, setSound] = useState(null);
+  // Map numeric level to language name
+  const mapLevelToLanguage = (levelNum) => {
+    const levelMap = {
+      1: 'English',
+      2: 'Arabic',
+      3: 'French'
+    };
+    return levelMap[levelNum] || 'English';
+  };
 
   useEffect(() => {
     fetchPronunciationQuizzes();
@@ -37,10 +46,15 @@ const PronunciationScreen = ({ route, navigation }) => {
 
   const fetchPronunciationQuizzes = async () => {
     try {
-      const response = await axios.get(`http://YOUR_API_URL/pronunciationListByLevel/${level}`);
+      const language = mapLevelToLanguage(level);
+      console.log('Fetching quizzes for:', language);
+      
+      const response = await axios.get(
+        `http://192.168.11.104:5000/pronunciationListByLevel/${language}`
+      );
+      
       if (response.data.status === 'Success') {
         setQuizList(response.data.row);
-        // Set the first quiz as current if available
         if (response.data.row.length > 0) {
           setCurrentQuiz(response.data.row[0]);
         }
@@ -55,8 +69,15 @@ const PronunciationScreen = ({ route, navigation }) => {
 
   const speakText = () => {
     if (currentQuiz) {
+      // Determine language for speech synthesis
+      let lang = 'en-US';
+      const currentLanguage = mapLevelToLanguage(level);
+      
+      if (currentLanguage === 'Arabic') lang = 'ar-SA';
+      if (currentLanguage === 'French') lang = 'fr-FR';
+      
       Speech.speak(currentQuiz.text, {
-        language: 'en-US',
+        language: lang,
         pitch: 1,
         rate: 0.8
       });
@@ -121,8 +142,9 @@ const PronunciationScreen = ({ route, navigation }) => {
       });
 
       // Send recording to backend for evaluation
+      
       const response = await axios.post(
-        `http://YOUR_API_URL/checkPronunciation/${currentQuiz.id}`, 
+        `http://192.168.11.104:5000/checkPronunciation/${currentQuiz.id}`, 
         formData,
         {
           headers: {

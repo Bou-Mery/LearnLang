@@ -28,7 +28,7 @@ const SpellingScreen = ({ route, navigation }) => {
 
   const fetchSpellingQuizzes = async () => {
     try {
-      const response = await axios.get(`http://YOUR_API_URL/spellingListByLevel/${level}`);
+      const response = await axios.get(`http://192.168.11.104:5000/spellingListByLevel/${level}`);
       if (response.data.status === 'Success') {
         setQuizList(response.data.row);
         // Set the first quiz as current if available
