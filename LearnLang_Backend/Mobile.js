@@ -47,6 +47,8 @@ export function register(req, res) {
               return res.status(400).json({ status: "Error", msg: "Email already exists" });
           }
           const salt = bcrypt.genSaltSync(10);
+          console.log('Received password:', password);
+
           const hashPassword = bcrypt.hashSync(password, salt);
           database.query(
               "INSERT INTO user (`name`, `email`, `password`) VALUES (?, ?, ?)",

@@ -24,18 +24,27 @@ const HomeScreen = ({ navigation }) => {
     fetchArticles();
   }, []);
 
-  const fetchArticles = async () => {
-    try {
-      const response = await axios.get('http://YOUR_API_URL/listArticle');
-      if (response.data.status === 'Success') {
-        setArticles(response.data.rows.slice(0, 3)); 
-      }
-    } catch (error) {
-      console.error('Error fetching articles:', error);
-    } finally {
-      setIsLoading(false);
+const fetchArticles = async () => {
+  try {
+    const response = await axios.get('http://192.168.11.104:5000/listArticle');
+    
+    // Check both possible response formats
+    let articlesData = [];
+    if (response.data.rows) {
+      articlesData = response.data.rows;
+    } else if (response.data.row) {
+      articlesData = Array.isArray(response.data.row) 
+        ? response.data.row 
+        : [response.data.row];
     }
-  };
+    
+    setArticles(articlesData.slice(0, 3));
+  } catch (error) {
+    console.error('Error fetching articles:', error);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   // Card component for lessons/activities
   const ActivityCard = ({ title, description, icon, onPress, level }) => (
@@ -88,11 +97,10 @@ const HomeScreen = ({ navigation }) => {
           title="Pronunciation Practice" 
           description="Improve your accent with voice exercises" 
           icon="mic-outline"
-          level="1"
-          onPress={() => navigation.navigate('Lessons', { 
-            screen: 'Pronunciation', 
-            params: { level: 1 } 
-          })}
+                    level="1"
+
+          onPress={() => navigation.navigate('Lessons')}
+
         />
         
         <ActivityCard 

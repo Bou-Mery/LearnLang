@@ -1,9 +1,12 @@
-import React from 'react'
+import React from 'react';
+import { View, Text } from 'react-native';
 
 function LessonDetailScreen() {
   return (
-    <div>LessonDetailScreen</div>
-  )
+    <View>
+      <Text>LessonDetailScreen</Text>
+    </View>
+  );
 }
 
-export default LessonDetailScreen
+export default LessonDetailScreen;
