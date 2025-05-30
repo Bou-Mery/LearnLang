@@ -1,5 +1,10 @@
-# LearnLang - Application d'Apprentissage des Langues par Reconnaissance Vocale
-
+<div align="center">
+  
+  <img src="https://github.com/user-attachments/assets/29545cac-415d-476d-bfe2-f9acded0b18e" alt="LearnLang Logo" width="180"> </div>
+ 
+# 🗣 LearnLang - Application d'Apprentissage des Langues par Reconnaissance Vocale
+ 
+  
 ## 📌 Description
 
 LearnLang est une application mobile innovante conçue pour faciliter l'apprentissage des langues étrangères en mettant l'accent sur la prononciation et l'expression orale. Grâce à des technologies avancées de reconnaissance vocale et de synthèse vocale, LearnLang offre une expérience interactive et personnalisée pour améliorer vos compétences linguistiques.
