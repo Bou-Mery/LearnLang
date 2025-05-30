@@ -87,13 +87,13 @@ LearnLang est une application mobile innovante conçue pour faciliter l'apprenti
 
 2. **Installer les dépendances**
    ```bash
-   cd frontend
+   cd LearnLang_Frontend
    npm install
    ```
 
 3. **Configurer le backend**
    ```bash
-   cd ../backend
+   cd ../LearnLang_Backend
    npm install
    ```
 
