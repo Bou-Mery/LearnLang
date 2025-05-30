@@ -163,6 +163,23 @@ export function articleviewsearch(req, res) {
   );
 }
 
+export function getRandomSpellingPhrases(req, res) {
+  const level = req.params.level;
+  database.query(
+    `SELECT id, text, level FROM spelling WHERE level = ? AND is_open = 1 ORDER BY RAND() LIMIT 5`,
+    [level],
+    (err, rows) => {
+      if (err) {
+        return res.status(500).json({ status: "Error", msg: "Failed to fetch phrases" });
+      }
+      if (rows.length === 0) {
+        return res.status(400).json({ status: "Error", msg: "No phrases found for this level" });
+      }
+      return res.status(200).json({ status: "Success", msg: "Success fetching phrases", rows });
+    }
+  );
+}
+
 export function spellingListBylevel(req, res) {
   const level = req.params.level;
   database.query(
@@ -233,62 +250,101 @@ export function PronunciationListById(req, res) {
 
 export function postSpellingById(req, res) {
   const id_quiz = req.params.id;
+
   database.query(
-    `SELECT text FROM spelling WHERE id = ?`,
+    `SELECT text, level FROM spelling WHERE id = ?`,
     [id_quiz],
     (err, result) => {
       if (err) {
-        return res.status(500).json({ status: "Error", msg: 'Failed get text quiz' });
+        return res.status(500).json({ status: 'Error', msg: 'Failed to get quiz text' });
       }
       if (result.length === 0) {
-        return res.status(404).json({ status: "Error", msg: 'Quiz not found' });
+        return res.status(404).json({ status: 'Error', msg: 'Quiz not found' });
       }
 
       const teks_quiz = result[0].text;
-      upload(req, res, (err) => {
+      const language = req.body.language || result[0].level;
+
+      upload(req, res, async (err) => {
         if (err) {
+          console.error("Multer error:", err);
           return res.status(500).json({ status: 'Error', msg: 'File upload error' });
         }
 
-        const filename = Date.now() + '-' + req.file.originalname;
-        const inputData = {
-          file: `temp/${filename}`,
-          label: teks_quiz,
-        };
+        if (!req.file) {
+          return res.status(400).json({ status: 'Error', msg: 'No audio file provided' });
+        }
 
-        sendToML(inputData)
-          .then((checkResult) => {
-            let resultMessage = '';
-            if (checkResult) {
-              resultMessage = 'Perfect';
-            } else {
-              resultMessage = 'Not Bad';
-            }
+        const originalAudioPath = req.file.path;
+        let convertedAudioPath = null;
 
-            database.query(
-              "INSERT INTO historyUserSpelling (id_user, id_quiz, is_answered, checker) VALUES (?,?,true,?)",
-              [1, id_quiz, resultMessage],
-              (err, rows) => {
-                if (err) {
-                  return res.status(500).json({ status: 'Error', msg: 'Failed insert history' });
-                }
-                return res.status(200).json({
-                  status: 'Success',
-                  msg: 'Success get result',
-                  text: teks_quiz,
-                  is_answered: true,
-                  check: resultMessage,
-                  is_open: true,
-                });
-              }
-            );
-          })
-          .catch((error) => {
-            return res.status(500).json({ status: 'Error', msg: 'Internal Server Error' });
+        try {
+          console.log('Original audio path:', originalAudioPath);
+          convertedAudioPath = await convertAudio(originalAudioPath);
+          console.log('Converted audio path:', convertedAudioPath);
+
+          const pythonProcess = spawn('python', [
+            path.join(__dirname, 'speech_recognition_script.py'),
+            convertedAudioPath,
+            teks_quiz,
+            language,
+            '--spelling-check' // Flag to indicate spelling-specific check
+          ]);
+
+          let pythonOutput = '';
+          let pythonError = '';
+
+          pythonProcess.stdout.on('data', (data) => {
+            pythonOutput += data.toString();
           });
+
+          pythonProcess.stderr.on('data', (data) => {
+            pythonError += data.toString();
+            console.error(`Python Error: ${data.toString()}`);
+          });
+
+          pythonProcess.on('close', (code) => {
+            console.log('Python process finished with code:', code);
+            console.log('Python output:', pythonOutput);
+
+            try {
+              const result = JSON.parse(pythonOutput);
+              const resultMessage = result.status === "Perfect" ? result.status : "Not Bad";
+
+              database.query(
+                "INSERT INTO historyuserspelling (id_user, id_quiz, is_answered, checker) VALUES (?,?,true,?)",
+                [1, id_quiz, resultMessage],
+                (insertErr) => {
+                  cleanupFiles(originalAudioPath, convertedAudioPath);
+
+                  if (insertErr) {
+                    return res.status(500).json({ status: 'Error', msg: 'Failed to save result' });
+                  }
+
+                  return res.status(200).json({
+                    status: resultMessage,
+                    msg: 'Successful spelling check',
+                    text: teks_quiz,
+                    recognized_text: result.recognized_text,
+                    is_answered: true,
+                    check: resultMessage,
+                    is_open: true,
+                  });
+                }
+              );
+            } catch (error) {
+              cleanupFiles(originalAudioPath, convertedAudioPath);
+              console.error('Error processing Python output:', error);
+              return res.status(500).json({ status: 'Error', msg: 'Failed to process speech recognition result' });
+            }
+          });
+        } catch (error) {
+          cleanupFiles(originalAudioPath, convertedAudioPath);
+          console.error("Processing error:", error);
+          return res.status(500).json({ status: 'Error', msg: 'Audio conversion failed' });
+        }
       });
-    }
-  );
+    });
 }
 
 function convertAudio(inputPath) {
@@ -458,11 +514,9 @@ export function getPronunciationHistory(req, res) {
   );
 }
 
-// New endpoint to fetch pronunciation statistics for a user
 export function getPronunciationStats(req, res) {
   const userId = req.params.userId;
   
-  // Query for result counts and percentages
   const resultQuery = `
     SELECT 
       COUNT(*) AS total_attempts,
@@ -472,7 +526,6 @@ export function getPronunciationStats(req, res) {
     WHERE id_user = ?
   `;
   
-  // Query for language frequency
   const languageQuery = `
     SELECT p.level AS language, COUNT(*) AS attempt_count
     FROM historyuserpnonunciation h

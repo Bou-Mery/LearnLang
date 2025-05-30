@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import {
 import axios from 'axios';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { PieChart, BarChart } from 'react-native-chart-kit';
+import { useFocusEffect } from '@react-navigation/native';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -24,11 +25,7 @@ const HistoryScreen = () => {
   const entriesPerPage = 10;
   const userId = 1; // Hardcoded for now; replace with authenticated user ID
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
       const historyResponse = await axios.get(
@@ -54,7 +51,16 @@ const HistoryScreen = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  // Fetch data when screen is focused and set up polling
+  useFocusEffect(
+    useCallback(() => {
+      fetchData(); // Fetch immediately when focused
+      const intervalId = setInterval(fetchData, 10000); // Poll every 10 seconds
+      return () => clearInterval(intervalId); // Cleanup on unfocus
+    }, [fetchData])
+  );
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -152,6 +158,9 @@ const HistoryScreen = () => {
       <View style={styles.header}>
         <Ionicons name="time-outline" size={28} color="#fff" />
         <Text style={styles.headerText}>Pronunciation History</Text>
+        <TouchableOpacity style={styles.refreshButton} onPress={fetchData}>
+          <Ionicons name="refresh" size={24} color="#fff" />
+        </TouchableOpacity>
       </View>
       <ScrollView
         style={styles.scrollContainer}
@@ -241,7 +250,7 @@ const HistoryScreen = () => {
               renderItem={renderHistoryItem}
               keyExtractor={(item) => item.id.toString()}
               contentContainerStyle={styles.list}
-              scrollEnabled={false} // Let ScrollView handle scrolling
+              scrollEnabled={false}
             />
             {/* Pagination Controls */}
             <View style={styles.paginationContainer}>
@@ -292,6 +301,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
     marginLeft: 10,
+    flex: 1,
+  },
+  refreshButton: {
+    padding: 5,
   },
   loadingContainer: {
     flex: 1,

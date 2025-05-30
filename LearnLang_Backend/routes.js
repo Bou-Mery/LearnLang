@@ -35,7 +35,8 @@ import {
   postSpellingById, 
   postPronunciationById,
   getPronunciationHistory,
-  getPronunciationStats // Add the new endpoint
+  getPronunciationStats,
+  getRandomSpellingPhrases // Add this
 } from './Mobile.js';
 
 const routes = express.Router();
@@ -80,6 +81,7 @@ routes.get('/pronunciationListById/:id', PronunciationListById);
 routes.post('/checkSpelling/:id', postSpellingById);
 routes.post('/checkPronunciation/:id', postPronunciationById);
 routes.get('/pronunciationHistory/:userId', getPronunciationHistory);
-routes.get('/pronunciationStats/:userId', getPronunciationStats); // Add the new route
+routes.get('/pronunciationStats/:userId', getPronunciationStats);
+routes.get('/spellingPhrases/:level', getRandomSpellingPhrases);
 
 export default routes;

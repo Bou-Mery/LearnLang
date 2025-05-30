@@ -24,29 +24,23 @@ const HomeScreen = ({ navigation }) => {
     fetchArticles();
   }, []);
 
-const fetchArticles = async () => {
-  try {
-    const response = await axios.get('http://192.168.11.104:5000/listArticle');
-    
-    // Check both possible response formats
-    let articlesData = [];
-    if (response.data.rows) {
-      articlesData = response.data.rows;
-    } else if (response.data.row) {
-      articlesData = Array.isArray(response.data.row) 
-        ? response.data.row 
-        : [response.data.row];
+  const fetchArticles = async () => {
+    try {
+      const response = await axios.get('http://192.168.11.104:5000/listArticle');
+      let articlesData = [];
+      if (response.data.rows) {
+        articlesData = response.data.rows;
+      } else if (response.data.row) {
+        articlesData = Array.isArray(response.data.row) ? response.data.row : [response.data.row];
+      }
+      setArticles(articlesData.slice(0, 3));
+    } catch (error) {
+      console.error('Error fetching articles:', error);
+    } finally {
+      setIsLoading(false);
     }
-    
-    setArticles(articlesData.slice(0, 3));
-  } catch (error) {
-    console.error('Error fetching articles:', error);
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
-  // Card component for lessons/activities
   const ActivityCard = ({ title, description, icon, onPress, level }) => (
     <TouchableOpacity style={styles.card} onPress={onPress}>
       <View style={styles.cardHeader}>
@@ -60,7 +54,6 @@ const fetchArticles = async () => {
 
   return (
     <ScrollView style={styles.container}>
-      {/* Header with user info */}
       <View style={styles.header}>
         <View>
           <Text style={styles.greeting}>Hello, {userInfo?.name || 'User'}!</Text>
@@ -72,7 +65,6 @@ const fetchArticles = async () => {
         />
       </View>
       
-      {/* Progress section */}
       <View style={styles.progressContainer}>
         <Text style={styles.sectionTitle}>Your Progress</Text>
         <ProgressBar 
@@ -90,17 +82,14 @@ const fetchArticles = async () => {
         </View>
       </View>
       
-      {/* Activities section */}
       <Text style={styles.sectionTitle}>Continue Learning</Text>
       <View style={styles.cardsContainer}>
         <ActivityCard 
           title="Pronunciation Practice" 
           description="Improve your accent with voice exercises" 
           icon="mic-outline"
-                    level="1"
-
-          onPress={() => navigation.navigate('Lessons')}
-
+          level="1"
+          onPress={() => navigation.navigate('Lessons', { screen: 'LanguageSelection' })}
         />
         
         <ActivityCard 
@@ -108,14 +97,10 @@ const fetchArticles = async () => {
           description="Test your spelling skills" 
           icon="create-outline"
           level="1"
-          onPress={() => navigation.navigate('Lessons', { 
-            screen: 'Spelling', 
-            params: { level: 1 } 
-          })}
+          onPress={() => navigation.navigate('Lessons', { screen: 'LanguageSelectionScreen' })}
         />
       </View>
       
-      {/* Articles section */}
       <Text style={styles.sectionTitle}>Featured Articles</Text>
       {isLoading ? (
         <ActivityIndicator size="large" color="#4F8EF7" style={styles.loader} />

@@ -8,24 +8,22 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import LoginScreen from '../screens/auth/LoginScreen';
 import RegisterScreen from '../screens/auth/RegisterScreen';
 import HomeScreen from '../screens/HomeScreen';
-//import LessonScreen from '../screens/lessons/LessonScreen';
 import LessonDetailScreen from '../screens/lessons/LessonDetailScreen';
 import PronunciationScreen from '../screens/lessons/PronunciationScreen';
 import SpellingScreen from '../screens/lessons/SpellingScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
 import HistoryScreen from '../screens/history/HistoryScreen';
-
-//new screens
 import LanguageSelection from '../screens/lessons/LanguageSelection';
 import QuizList from '../screens/lessons/QuizList';
+import LanguageSelectionScreen from '../screens/lessons/LanguageSelectionScreen';
+
 // Context
 import { AuthContext } from '../context/AuthContext';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+const LessonStack = createStackNavigator(); // Define LessonStack here
 
-const LessonStack = createStackNavigator(); // Add this line
-// Define LessonStackNavigator FIRST
 const LessonStackNavigator = () => {
   return (
     <LessonStack.Navigator>
@@ -47,13 +45,15 @@ const LessonStackNavigator = () => {
         name="Spelling" 
         component={SpellingScreen} 
       />
-      {/* Add other screens here */}
+      <LessonStack.Screen 
+        name="LanguageSelectionScreen" 
+        component={LanguageSelectionScreen} 
+        options={{ title: 'Select Language for Spelling' }}
+      />
     </LessonStack.Navigator>
   );
 };
 
-
-// Tab Navigator
 const TabNavigator = () => {
   return (
     <Tab.Navigator
@@ -85,7 +85,6 @@ const TabNavigator = () => {
   );
 };
 
-// Main Navigation
 const AppNavigator = () => {
   const { userToken } = useContext(AuthContext);
 
@@ -93,7 +92,6 @@ const AppNavigator = () => {
     <NavigationContainer>
       <Stack.Navigator>
         {userToken === null ? (
-          // Auth screens
           <>
             <Stack.Screen 
               name="Login" 
@@ -107,7 +105,6 @@ const AppNavigator = () => {
             />
           </>
         ) : (
-          // App screens
           <Stack.Screen
             name="Main"
             component={TabNavigator}
