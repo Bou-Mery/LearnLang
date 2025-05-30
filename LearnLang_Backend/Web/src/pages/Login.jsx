@@ -41,7 +41,7 @@ export default function Login(){
       <div className="bg d-flex justify-content-center align-items-center vh-100">
       <div className="bg-light d-flex border p-5 rounded-5 flex-column" >
       <h2 className="textstyle">Hello! </h2>
-      <span className=" textstyle ms-4 mb-2 mt-n2 ">VoiceLearn Admin</span>
+      <span className=" textstyle ms-4 mb-2 mt-n2 ">LearnLang Admin</span>
       <form onSubmit={handleLogin}>
           <div className="textstyle mt-3">
               <label htmlFor="email">Email</label>

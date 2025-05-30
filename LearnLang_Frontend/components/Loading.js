@@ -4,7 +4,7 @@ import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
 
 const Loading = ({ 
   size = 'large', 
-  color = '#4F8EF7', 
+  color = '#a7cbb1', 
   message, 
   fullScreen = false,
   overlay = false,
