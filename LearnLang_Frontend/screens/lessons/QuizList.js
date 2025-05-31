@@ -9,7 +9,6 @@ const QuizList = ({ route, navigation }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Call your backend API to get quizzes by language
     axios
       .get(`http://192.168.11.104:5000/pronunciationListByLevel/${encodeURIComponent(language)}`)
       .then((res) => {
@@ -26,7 +25,7 @@ const QuizList = ({ route, navigation }) => {
       .finally(() => setLoading(false));
   }, [language]);
 
-  if (loading) return <ActivityIndicator size="large" style={{ flex:1, justifyContent:'center', alignItems:'center' }} />;
+  if (loading) return <ActivityIndicator size="large" style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} />;
 
   return (
     <View style={styles.container}>
@@ -40,7 +39,7 @@ const QuizList = ({ route, navigation }) => {
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.item}
-onPress={() => navigation.navigate('Pronunciation', { quiz: item })}
+              onPress={() => navigation.navigate('Pronunciation', { quiz: item, language })} // Pass quiz and language
             >
               <Text style={styles.word}>{item.text}</Text>
             </TouchableOpacity>

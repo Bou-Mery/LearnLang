@@ -15,25 +15,16 @@ import { Audio } from 'expo-av';
 import * as Speech from 'expo-speech';
 
 const PronunciationScreen = ({ route, navigation }) => {
-  const { level } = route.params || { level: 1 };
+  const { quiz, language } = route.params || { language: 'English' }; // Default to English
   const [isLoading, setIsLoading] = useState(true);
   const [quizList, setQuizList] = useState([]);
-  const [currentQuiz, setCurrentQuiz] = useState(null);
+  const [currentQuiz, setCurrentQuiz] = useState(quiz || null); // Initialize with passed quiz
   const [recording, setRecording] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingURI, setRecordingURI] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState(null);
   const [sound, setSound] = useState(null);
-  // Map numeric level to language name
-  const mapLevelToLanguage = (levelNum) => {
-    const levelMap = {
-      1: 'English',
-      2: 'Arabic',
-      3: 'French'
-    };
-    return levelMap[levelNum] || 'English';
-  };
 
   useEffect(() => {
     fetchPronunciationQuizzes();
@@ -42,20 +33,19 @@ const PronunciationScreen = ({ route, navigation }) => {
         sound.unloadAsync();
       }
     };
-  }, [level]);
+  }, [language]);
 
   const fetchPronunciationQuizzes = async () => {
     try {
-      const language = mapLevelToLanguage(level);
       console.log('Fetching quizzes for:', language);
-      
       const response = await axios.get(
-        `http://192.168.11.104:5000/pronunciationListByLevel/${language}`
+        `http://192.168.11.104:5000/pronunciationListByLevel/${encodeURIComponent(language)}`
       );
       
       if (response.data.status === 'Success') {
         setQuizList(response.data.row);
-        if (response.data.row.length > 0) {
+        // Only set currentQuiz if no quiz was passed
+        if (!quiz && response.data.row.length > 0) {
           setCurrentQuiz(response.data.row[0]);
         }
       }
@@ -69,12 +59,9 @@ const PronunciationScreen = ({ route, navigation }) => {
 
   const speakText = () => {
     if (currentQuiz) {
-      // Determine language for speech synthesis
       let lang = 'en-US';
-      const currentLanguage = mapLevelToLanguage(level);
-      
-      if (currentLanguage === 'Arabic') lang = 'ar-SA';
-      if (currentLanguage === 'French') lang = 'fr-FR';
+      if (language === 'Arabic') lang = 'ar-SA';
+      if (language === 'French') lang = 'fr-FR';
       
       Speech.speak(currentQuiz.text, {
         language: lang,
@@ -126,47 +113,47 @@ const PronunciationScreen = ({ route, navigation }) => {
       Alert.alert('Error', 'Failed to play recording');
     }
   };
-  const submitRecording = async () => {
-    if (!recordingURI || !currentQuiz) return;
 
-    setIsSubmitting(true);
-    try {
-      // Create form data for file upload
-      const formData = new FormData();
-      const fileInfo = await FileSystem.getInfoAsync(recordingURI);
-      
-      formData.append('file', {
-        uri: recordingURI,
-        name: 'recording.wav',
-        type: 'audio/wav'
-      });
+// PronunciationScreen.js
+const submitRecording = async () => {
+  if (!recordingURI || !currentQuiz) return;
 
-      // Send recording to backend for evaluation
-      
-      const response = await axios.post(
-        `http://192.168.11.104:5000/checkPronunciation/${currentQuiz.id}`, 
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
+  setIsSubmitting(true);
+  try {
+    const formData = new FormData();
+    const fileInfo = await FileSystem.getInfoAsync(recordingURI);
+    
+    formData.append('file', {
+      uri: recordingURI,
+      name: 'recording.wav',
+      type: 'audio/wav'
+    });
+    formData.append('language', language); // Add language to formData
 
-      if (response.data.status) {
-        setResult({
-          status: response.data.status,
-          recognized_text: response.data.recognized_text,
-          expected_text: currentQuiz.text
-        });
+    const response = await axios.post(
+      `http://192.168.11.104:5000/checkPronunciation/${currentQuiz.id}`, 
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       }
-    } catch (error) {
-      console.error('Error submitting recording:', error);
-      Alert.alert('Error', 'Failed to submit recording for evaluation');
-    } finally {
-      setIsSubmitting(false);
+    );
+
+    if (response.data.status) {
+      setResult({
+        status: response.data.status,
+        recognized_text: response.data.recognized_text,
+        expected_text: currentQuiz.text
+      });
     }
-  };
+  } catch (error) {
+    console.error('Error submitting recording:', error);
+    Alert.alert('Error', 'Failed to submit recording for evaluation');
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const resetExercise = () => {
     setRecordingURI(null);
@@ -174,15 +161,14 @@ const PronunciationScreen = ({ route, navigation }) => {
   };
 
   const moveToNextQuiz = () => {
-    const currentIndex = quizList.findIndex(quiz => quiz.id === currentQuiz.id);
+    const currentIndex = quizList.findIndex(q => q.id === currentQuiz.id);
     if (currentIndex < quizList.length - 1) {
       setCurrentQuiz(quizList[currentIndex + 1]);
       resetExercise();
     } else {
-      // If it's the last quiz, show completion message
       Alert.alert(
-        'Level Completed', 
-        'You have completed all pronunciation exercises for this level!',
+        'Language Completed', 
+        'You have completed all pronunciation exercises for this language!',
         [{ text: 'OK', onPress: () => navigation.goBack() }]
       );
     }
@@ -200,7 +186,7 @@ const PronunciationScreen = ({ route, navigation }) => {
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Pronunciation Practice</Text>
-        <Text style={styles.subtitle}>Level {level}</Text>
+        <Text style={styles.subtitle}>{language}</Text>
       </View>
 
       {currentQuiz ? (
@@ -296,7 +282,7 @@ const PronunciationScreen = ({ route, navigation }) => {
       ) : (
         <View style={styles.emptyContainer}>
           <Ionicons name="sad-outline" size={64} color="#ccc" />
-          <Text style={styles.emptyText}>No pronunciation exercises available for this level</Text>
+          <Text style={styles.emptyText}>No pronunciation exercises available for this language</Text>
         </View>
       )}
     </ScrollView>
